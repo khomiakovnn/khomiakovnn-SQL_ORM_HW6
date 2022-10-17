@@ -1,5 +1,5 @@
 import sqlalchemy as sq
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
 
 Base = declarative_base()
@@ -19,6 +19,8 @@ class Book(Base):
     title = sq.Column(sq.String(length=150), nullable=False)
     id_publisher = sq.Column(sq.Integer, sq.ForeignKey(
         "publisher.id"), nullable=False)
+
+    publisher = relationship(Publisher, backref='book')
 
 
 class Shop(Base):
@@ -45,6 +47,9 @@ class Stock(Base):
     id_book = sq.Column(sq.Integer, sq.ForeignKey("book.id"), nullable=False)
     id_shop = sq.Column(sq.Integer, sq.ForeignKey("shop.id"), nullable=False)
     count = sq.Column(sq.Integer, nullable=False)
+
+    book = relationship(Book, backref='stock')
+    shop = relationship(Shop, backref='stock')
 
 
 def create_tables(engine):

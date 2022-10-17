@@ -64,9 +64,27 @@ def get_user_data():
 def query_db(session, id):
     """Query from publisher table"""
 
-    publisher_query = session.query(Publisher).filter(Publisher.id == id)
-    for s in publisher_query.all():
-        print(s.id, s.name)
+    # Назпрос наименования издателя по id:
+    publisher_query = session.query(Publisher).filter(Publisher.id == id).all()
+    for s in publisher_query:
+        print(f"Издатель с id №{s.id} - {s.name}")
+
+    # Запрос книг по издателю:
+    publisher_books = session.query(Book).filter(Book.id_publisher == id).all()
+
+    # Запрос магазинов по книгам издателя:
+    shops = []
+    for s in publisher_books:
+        shop = session.query(Stock).filter(Stock.id_book == s.id).all()
+        shops.extend(shop)
+    shops_id = []
+    for s in shops:
+        shops_id.append(s.id_shop)
+    print('Продается в магазинах:')
+    for s_id in set(shops_id):
+        shop_name = session.query(Shop).filter(Shop.id == s_id).all()
+        for s in shop_name:
+            print(s.name)
 
 
 def main():
